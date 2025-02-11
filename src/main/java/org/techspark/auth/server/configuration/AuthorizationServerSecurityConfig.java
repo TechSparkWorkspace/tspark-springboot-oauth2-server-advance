@@ -2,6 +2,7 @@ package org.techspark.auth.server.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
@@ -15,6 +16,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class AuthorizationServerSecurityConfig {
 
     @Bean
+    @Order(1)
     public SecurityFilterChain authServerSecurityFilterChain(HttpSecurity http) throws Exception {
         // Apply default security settings for an OAuth 2.0 Authorization Server
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
@@ -24,6 +26,20 @@ public class AuthorizationServerSecurityConfig {
 
         return http.build();
 
+    }
+
+    @Bean
+    @Order(2)
+    public SecurityFilterChain appSecurityFilterChain(HttpSecurity http) throws Exception {
+        // Here, you specifically allow actuator
+        http
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/actuator/**").permitAll()
+                        .anyRequest().authenticated()
+                )
+                .formLogin(Customizer.withDefaults());
+
+        return http.build();
     }
 
     @Bean
