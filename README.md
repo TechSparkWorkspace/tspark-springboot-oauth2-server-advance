@@ -23,8 +23,35 @@ curl -u my-client:secret \
   http://localhost:8080/oauth2/token
 ```
 
-_Note:_ Adjust the port number if your Spring Boot application runs on a port other than 8080.
+## Token Introspection
 
+Call the Token Introspection endpoint to verify whether a token is active (valid) and gather metadata about it.
 
+```shell
+curl -u my-client:secret \
+     -X POST \
+     -d "token=ACCESS_TOKEN_GOES_HERE" \
+     http://localhost:8080/oauth2/introspect
+```
 
+## Requesting Token with a Permitted Scope
 
+Generating a token for permitted scope example: `read` will look like this:
+
+```shell
+curl -u my-client:secret \
+     -d "grant_type=client_credentials" \
+     -d "scope=read" \
+     http://localhost:8080/oauth2/token
+```
+
+## Requesting Token for a Non-Permitted Scope
+
+Try requesting a scope the client isn't allowed (for instance, admin)
+
+```shell
+curl -u my-client:secret \
+     -d "grant_type=client_credentials" \
+     -d "scope=admin" \
+     http://localhost:8080/oauth2/token
+```
